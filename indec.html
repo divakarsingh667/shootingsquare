@@ -1,0 +1,166 @@
+<html>
+    <head>
+<style>
+    #hero{
+background: #ff0000;
+width: 20px;
+height: 20px;
+position:absolute;
+
+border:solid 2px goldenrod;
+ }
+ #background{
+        background-color: black;
+        height: 500px;
+        width: 500px;
+        position: absolute;
+       top:-2px;
+       left:-2px; 
+       border:solid 1.5px goldenrod;
+       
+        
+    }
+    #laser{
+    background: green;
+    width:2px;
+    height: 50px;
+    position: absolute;
+    }
+
+    
+</style>
+    </head>
+    <body><div id="background"></div>
+        <div id="hero"> </div>
+        <div id="laser"></div>
+        
+   <script>
+       var LEFT_KEY=37;
+       var RIGHT_KEY=39;
+       var UP_KEY=38;
+       var DOWN_KEY=40;
+       var SPACE_KEY=32;
+       var lastLoopRun=0;
+       var HERO_MOVEMENT=3;
+      
+      function createSprite(element,x,y,w,h){
+           var result=new Object();
+            result.element=element;
+            result.x=x;
+            result.y=y;
+            result.w=w;
+            result.h=h;
+            return result;
+       }
+       var controller=new Object();
+       function toggleKey(keyCode,isPressed)
+       {
+          if(keyCode == LEFT_KEY)
+           {
+               controller.left=isPressed;
+
+           }
+           if(keyCode == RIGHT_KEY)
+           {
+               controller.right=isPressed;
+               
+           }
+           if(keyCode == UP_KEY)
+           {
+               controller.up=isPressed;
+               
+           }
+           if(keyCode == DOWN_KEY)
+           {
+               controller.down=isPressed;
+               
+           }
+           if(keyCode==SPACE_KEY){
+               controller.space=isPressed;
+           }
+           }
+            function ensureBound(sprite){
+                   if(sprite.x<0){
+                   sprite.x=0;}
+                   if(sprite.y<0){
+                   sprite.y=0;}
+                   if(sprite.x+sprite.w>495){
+                   sprite.x=495-sprite.w;}
+                   if(sprite.y+sprite.h>495){
+                   sprite.y=495-sprite.h;}
+            }
+       
+       function setPosition(sprite)
+       {
+           var e=document.getElementById(sprite.element);
+           e.style.left=sprite.x+'px';
+           e.style.top=sprite.y+'px';
+           
+         }
+         document.onkeydown=function(evt)
+         {
+             toggleKey(evt.keyCode,true)
+         }
+         document.onkeyup=function(evt)
+         {
+             toggleKey(evt.keyCode,false)
+         }
+         
+         function handleController()
+         {
+           if(controller.up)
+        {
+            hero.y-=HERO_MOVEMENT;
+        }
+        if(controller.down)
+        {
+            hero.y+=HERO_MOVEMENT;
+        }
+        if(controller.left)
+        {
+            hero.x-=HERO_MOVEMENT;
+        }
+        if(controller.right)
+        {
+            hero.x+=HERO_MOVEMENT;
+        
+        }
+        if(controller.space&&laser.y<=10 )
+        {
+            laser.x=hero.x+11.5;
+            laser.y=hero.y-laser.h;
+        }         
+        ensureBound(hero);
+         
+         }
+         function showSprites()
+         {
+            setPosition(hero);
+            setPosition(laser);
+         }
+         function updatePosition()
+         {
+            //setTimeout('updatePosition();',100);
+             laser.y-=10;
+             
+         }
+         function loop()
+         {
+             
+             if(new Date().getTime()-lastLoopRun>40)
+             {
+                 updatePosition();
+               handleController();
+               showSprites();
+               lastLoopRun=new Date().getTime();
+             }
+             setTimeout('loop();',2);
+         }
+
+         var hero=createSprite('hero',250,460,20,20);
+         var laser=createSprite('laser',0,-120,2,50);
+       loop();
+       
+   </script>
+    </body>
+</html>
